@@ -75,18 +75,15 @@ const baseStyle = `
   .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; }
   @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-  /* リンクボタン (最大4つ並列・中央揃え) */
   .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; justify-content: center; width: 100%; max-width: 440px; margin: 0 auto; }
   .link-btn { background: var(--main); color: white; text-decoration: none; padding: 10px 5px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; min-height: 44px; }
 
-  /* 管理画面 */
   .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
   .acc-header { background: #f8f9fa; padding: 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
   .acc-content { padding: 15px; display: none; }
   .inner-acc { border: 1px solid #eee; margin-bottom: 8px; border-radius: 10px; }
   .inner-header { padding: 12px 15px; background: #fff; cursor: pointer; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
   
-  /* ランク設定修正 */
   .rank-flex-container { display: flex; flex-wrap: wrap; gap: 10px; }
   .rank-box { flex: 1 1 calc(50% - 10px); display: flex; align-items: center; gap: 8px; background: #fdfdfd; padding: 5px 0; }
   .rank-box span { font-size: 0.9rem; min-width: 35px; color: var(--text); }
@@ -96,6 +93,7 @@ const baseStyle = `
   .btn-sm { min-height: 32px; padding: 0 10px; font-size: 0.8rem; width: auto; margin: 0; }
   .btn-red { background: var(--red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border:none; cursor:pointer; font-weight:bold; flex-shrink:0; }
   .btn-outline { background: white; color: var(--main); border: 1px solid var(--main); }
+  .btn-reset { background: #fee; color: var(--red); border: 1px solid #fcc; margin-top: 10px; }
   input, textarea { padding: 10px; border-radius: 10px; border: 1px solid #ddd; width: 100%; font-size: 1rem; }
 `;
 
@@ -199,17 +197,14 @@ async function adminDashboardHtml(data) {
     <div class="acc-item">
       <div class="acc-header" onclick="toggleAcc(this)" style="background:var(--sub); color:var(--main);">⚙️ 各種設定 <span>▼</span></div>
       <div class="acc-content">
-        
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">🔐 パスワード <span>▼</span></div>
           <div class="acc-content"><input type="text" id="password" value="${data.password}"></div>
         </div>
-
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">📢 メッセージ <span>▼</span></div>
           <div class="acc-content"><textarea id="message">${data.message}</textarea></div>
         </div>
-
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">📅 イベント情報 <span>▼</span></div>
           <div class="acc-content">
@@ -222,7 +217,6 @@ async function adminDashboardHtml(data) {
             </div>
           </div>
         </div>
-
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">🔗 リンク管理 <span>▼</span></div>
           <div class="acc-content">
@@ -230,7 +224,6 @@ async function adminDashboardHtml(data) {
             <button class="btn btn-sm btn-outline" onclick="addLink()">+ リンク追加</button>
           </div>
         </div>
-
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">🏆 ランク設定 <span>▼</span></div>
           <div class="acc-content">
@@ -242,7 +235,6 @@ async function adminDashboardHtml(data) {
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -260,6 +252,7 @@ async function adminDashboardHtml(data) {
           </div>`).join('')}
       </div>
       <button class="btn btn-outline" onclick="addStamp()">+ リスナー新規追加</button>
+      <button class="btn btn-sm btn-reset" onclick="resetAllStamps()">⚡ スタンプ数を全リセット</button>
     </div>
 
     <button class="btn" onclick="save()">設定をすべて保存</button>
@@ -283,6 +276,12 @@ async function adminDashboardHtml(data) {
     function addLink(){ const d=document.createElement('div'); d.className='item-row'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="l-label" placeholder="名" style="width:30%"><input class="l-url" placeholder="URL" style="flex-grow:1">'; document.getElementById('link-list').appendChild(d); }
     function addStamp(){ const d=document.createElement('div'); d.className='item-row admin-stamp-item'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="s-name" style="flex-grow:1"><button class="btn-sm btn-outline" onclick="this.nextElementSibling.value--">－</button><input type="number" value="0" class="s-count" style="width:50px; text-align:center; border:none; background:transparent;"><button class="btn-sm" style="background:var(--main);color:white" onclick="this.previousElementSibling.value++">＋</button>'; document.getElementById('stamp-list').prepend(d); }
     
+    function resetAllStamps(){
+      if(confirm('本当に全員のスタンプ数をリセットしますか？')){
+        document.querySelectorAll('.s-count').forEach(input => input.value = 0);
+      }
+    }
+
     async function save(){
       const thresholds = {
         silver: parseInt(document.getElementById('th-silver').value),
