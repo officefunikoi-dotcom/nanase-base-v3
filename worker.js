@@ -274,7 +274,14 @@ async function adminDashboardHtml(data) {
     }
     function filterAdmin(q){ document.querySelectorAll('.admin-stamp-item').forEach(e=>{ e.style.display=e.querySelector('.s-name').value.toLowerCase().includes(q.toLowerCase())?'flex':'none'; }); }
     function addLink(){ const d=document.createElement('div'); d.className='item-row'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="l-label" placeholder="名" style="width:30%"><input class="l-url" placeholder="URL" style="flex-grow:1">'; document.getElementById('link-list').appendChild(d); }
-    function addStamp(){ const d=document.createElement('div'); d.className='item-row admin-stamp-item'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="s-name" style="flex-grow:1"><button class="btn-sm btn-outline" onclick="this.nextElementSibling.value--">－</button><input type="number" value="0" class="s-count" style="width:50px; text-align:center; border:none; background:transparent;"><button class="btn-sm" style="background:var(--main);color:white" onclick="this.previousElementSibling.value++">＋</button>'; document.getElementById('stamp-list').prepend(d); }
+    
+    // リストの最下部（ボタンのすぐ上）に追加するよう修正
+    function addStamp(){ 
+      const d=document.createElement('div'); 
+      d.className='item-row admin-stamp-item'; 
+      d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="s-name" style="flex-grow:1"><button class="btn-sm btn-outline" onclick="this.nextElementSibling.value--">－</button><input type="number" value="0" class="s-count" style="width:50px; text-align:center; border:none; background:transparent;"><button class="btn-sm" style="background:var(--main);color:white" onclick="this.previousElementSibling.value++">＋</button>'; 
+      document.getElementById('stamp-list').appendChild(d); 
+    }
     
     function resetAllStamps(){
       if(confirm('本当に全員のスタンプ数をリセットしますか？')){
