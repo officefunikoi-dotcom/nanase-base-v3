@@ -7,11 +7,11 @@ export default {
       const data = await env.DATA_BOX.get("CONFIG", { type: "json" });
       return data || {
         password: "607",
-        message: "NON BASEへようこそ！",
+        message: "NANASE BASEへようこそ！",
         eventInfo: "イベント準備中",
         eventAlign: "center",
         links: [{ label: "Twitter", url: "#" }],
-        stamps: [{ name: "リスナーA", count: 0 }],
+        stamps: [{ name: "ナナセ", count: 0 }],
         thresholds: { silver: 10, gold: 30, platinum: 50, black: 100 },
         displaySettings: { message: true, event: true, links: true, stamps: true }
       };
@@ -52,8 +52,12 @@ const baseStyle = `
   body { background: #fdfdfd; color: var(--text); padding-bottom: 80px; }
   .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 15px; }
   
+  /* カード基本 */
+  .card { background: var(--white); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+  .card-label { font-size: 0.9rem; color: var(--main); margin-bottom: 8px; font-weight: bold; }
+
   /* デジタル会員証 */
-  .member-card { width: 100%; aspect-ratio: 1.6 / 1; border-radius: 20px; padding: 25px; position: relative; color: white; margin-bottom: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+  .member-card { width: 100%; aspect-ratio: 1.6 / 1; border-radius: 20px; padding: 25px; position: relative; color: white; margin-bottom: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.15); overflow: hidden; }
   .card-bronze { background: linear-gradient(135deg, #804a00, #3d2300); }
   .card-silver { background: linear-gradient(135deg, #a0a0a0, #4a4a4a); }
   .card-gold { background: linear-gradient(135deg, #d4af37, #7a5f00); }
@@ -62,31 +66,39 @@ const baseStyle = `
   .card-topfan { background: linear-gradient(135deg, #ff00cc, #3333ff); animation: shine 3s infinite; }
   @keyframes shine { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
-  .card-title { font-size: 1.6rem; font-weight: 900; letter-spacing: 3px; }
-  .card-name { position: absolute; bottom: 30px; left: 25px; font-size: 1.8rem; font-weight: bold; }
-  .card-rank { position: absolute; top: 25px; right: 25px; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
-  .card-count { position: absolute; top: 60px; right: 25px; font-size: 0.9rem; font-weight: bold; }
+  .card-title { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; position: absolute; top: 25px; left: 25px; }
+  .card-name { position: absolute; bottom: 25px; left: 25px; font-size: 1.8rem; font-weight: bold; }
+  .card-info-group { position: absolute; bottom: 25px; right: 25px; text-align: right; }
+  .card-rank { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; display: inline-block; margin-bottom: 5px; }
+  .card-count { font-size: 0.9rem; font-weight: bold; }
 
+  /* メッセージ */
   .marquee-container { background: var(--sub); color: var(--main); padding: 12px 0; overflow: hidden; white-space: nowrap; margin-bottom: 15px; border-radius: 12px; font-weight: bold; }
   .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; }
   @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-  .link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-  .link-btn { background: var(--main); color: white; text-decoration: none; padding: 10px 4px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; min-height: 44px; }
+  /* リンクボタン */
+  .link-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; justify-items: center; width: 100%; }
+  .link-btn { background: var(--main); color: white; text-decoration: none; padding: 12px 10px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 0.85rem; width: 100%; max-width: 180px; display: flex; align-items: center; justify-content: center; }
 
-  /* 管理画面用スタイル */
-  .card { background: var(--white); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+  /* 管理画面用 */
   .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
   .acc-header { background: #f8f9fa; padding: 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
   .acc-content { padding: 15px; display: none; }
-  .inner-acc { border: 1px solid #eee; margin-bottom: 5px; border-radius: 8px; }
-  .inner-header { padding: 10px 15px; background: #fff; cursor: pointer; font-size: 0.9rem; display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; }
+  .inner-acc { border: 1px solid #eee; margin-bottom: 8px; border-radius: 10px; }
+  .inner-header { padding: 12px 15px; background: #fff; cursor: pointer; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
   
+  /* ランク設定の崩れ修正 */
+  .rank-setting-row { display: flex; gap: 15px; margin-bottom: 12px; align-items: center; }
+  .rank-input-group { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .rank-input-group input { width: 100%; }
+
   .item-row { display: flex; align-items: center; gap: 8px; background: #fafafa; padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
   .btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; background: var(--main); color: white; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; }
   .btn-sm { min-height: 32px; padding: 0 10px; font-size: 0.8rem; width: auto; margin: 0; }
-  .btn-red { background: var(--red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border:none; cursor:pointer; font-weight:bold; }
-  input, textarea { padding: 8px; border-radius: 8px; border: 1px solid #ddd; width: 100%; }
+  .btn-red { background: var(--red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border:none; cursor:pointer; font-weight:bold; flex-shrink:0; }
+  .btn-outline { background: white; color: var(--main); border: 1px solid var(--main); }
+  input, textarea { padding: 10px; border-radius: 10px; border: 1px solid #ddd; width: 100%; font-size: 1rem; }
 `;
 
 async function mainPortalHtml(data) {
@@ -100,27 +112,33 @@ async function mainPortalHtml(data) {
     ${data.displaySettings.message ? `<div class="marquee-container"><div class="marquee-text">${data.message}</div></div>` : ''}
 
     ${data.displaySettings.event ? `<div class="card" style="text-align:${data.eventAlign || 'center'};">
-      <h3 style="font-size:0.9rem; color:var(--main); margin-bottom:5px;">EVENT INFO</h3>
+      <div class="card-label">EVENT INFO</div>
       <p style="white-space:pre-wrap;">${data.eventInfo}</p>
     </div>` : ''}
 
-    ${data.displaySettings.links ? `<div class="link-grid">${data.links.map(l => `<a href="${l.url}" target="_blank" class="link-btn">${l.label}</a>`).join('')}</div>` : ''}
+    ${data.displaySettings.links ? `<div class="card" style="text-align:center;">
+      <div class="card-label">LINKS</div>
+      <div class="link-grid" style="margin: 0 auto;">
+        ${data.links.map(l => `<a href="${l.url}" target="_blank" class="link-btn">${l.label}</a>`).join('')}
+      </div>
+    </div>` : ''}
 
-    <div id="my-stamp-section" class="card" style="background:#fcfcfc; border:1px dashed #bbb;">
-        <div style="display:flex; gap:5px; margin-bottom:10px;">
-          <input type="text" id="my-name-input" placeholder="名前を入力してカードを表示">
+    <div class="card" style="background:#fcfcfc; border:1px dashed #bbb;">
+        <div class="card-label">MY MEMBER'S CARD</div>
+        <div style="display:flex; gap:5px; margin-bottom:15px;">
+          <input type="text" id="my-name-input" placeholder="名前を入力">
           <button class="btn btn-sm" onclick="saveMyName()">表示</button>
         </div>
         <div id="card-display-area" style="display:none;"></div>
     </div>
 
     <div class="card">
-      <h3 style="margin-bottom:10px; font-size:1rem; color:var(--main);">RANKING</h3>
-      <input type="text" placeholder="名前で検索..." oninput="filterUser(this.value)" style="margin-bottom:10px;">
+      <div class="card-label">RANKING</div>
+      <input type="text" placeholder="名前で検索..." oninput="filterUser(this.value)" style="margin-bottom:12px;">
       <div style="max-height:400px; overflow-y:auto;">
         ${sortedStamps.map((s, i) => {
           let crown = i===0?"👑 ":i===1?"🥈 ":i===2?"🥉 ":"";
-          return `<div class="user-item" data-name="${s.name}" style="display:flex; justify-content:space-between; padding:10px 5px; border-bottom:1px solid #f0f0f0;">
+          return `<div class="user-item" data-name="${s.name}" style="display:flex; justify-content:space-between; padding:12px 5px; border-bottom:1px solid #f0f0f0;">
             <span>${crown}${s.name}</span><b style="color:var(--main);">${s.count}</b>
           </div>`
         }).join('')}
@@ -130,7 +148,7 @@ async function mainPortalHtml(data) {
     </div>
     <script>
       const stamps = ${JSON.stringify(data.stamps)};
-      const th = ${JSON.stringify(data.thresholds || {silver:10,gold:30,platinum:50,black:100})};
+      const th = ${JSON.stringify(data.thresholds)};
       const topCount = ${topCount};
 
       function saveMyName(){
@@ -153,10 +171,12 @@ async function mainPortalHtml(data) {
 
             document.getElementById('card-display-area').innerHTML = \`
               <div class="member-card \${cls}">
-                <div class="card-title">NON BASE</div>
-                <div class="card-rank">\${rank}</div>
-                <div class="card-count">VISIT: \${user.count}</div>
+                <div class="card-title">NANASE BASE</div>
                 <div class="card-name">\${user.name}</div>
+                <div class="card-info-group">
+                    <div class="card-rank">\${rank}</div>
+                    <div class="card-count">VISIT: \${user.count}</div>
+                </div>
               </div>\`;
             document.getElementById('card-display-area').style.display = 'block';
           }
@@ -165,7 +185,7 @@ async function mainPortalHtml(data) {
 
       function filterUser(q){
         document.querySelectorAll('.user-item').forEach(el => {
-          el.style.display = el.dataset.name.includes(q) ? 'flex' : 'none';
+          el.style.display = el.dataset.name.toLowerCase().includes(q.toLowerCase()) ? 'flex' : 'none';
         });
       }
     </script></body></html>`;
@@ -195,7 +215,7 @@ async function adminDashboardHtml(data) {
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">📅 イベント情報 <span>▼</span></div>
           <div class="acc-content">
-            <textarea id="eventInfo" style="margin-bottom:10px;">${data.eventInfo}</textarea>
+            <textarea id="eventInfo" style="margin-bottom:12px;">${data.eventInfo}</textarea>
             <div style="display:flex; gap:10px; align-items:center;">
               配置：
               <button class="btn-sm ${data.eventAlign==='left'?'':'btn-outline'}" onclick="setAlign('left',this)">左揃え</button>
@@ -208,7 +228,7 @@ async function adminDashboardHtml(data) {
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">🔗 リンク管理 <span>▼</span></div>
           <div class="acc-content">
-            <div id="link-list">${data.links.map(l=>`<div class="item-row"><input value="${l.label}" class="l-label" placeholder="名"><input value="${l.url}" class="l-url" placeholder="URL"><button class="btn-red" onclick="this.parentElement.remove()">×</button></div>`).join('')}</div>
+            <div id="link-list">${data.links.map(l=>`<div class="item-row"><button class="btn-red" onclick="this.parentElement.remove()">×</button><input value="${l.label}" class="l-label" placeholder="名" style="width:30%"><input value="${l.url}" class="l-url" placeholder="URL" style="flex-grow:1"></div>`).join('')}</div>
             <button class="btn btn-sm btn-outline" onclick="addLink()">+ リンク追加</button>
           </div>
         </div>
@@ -216,8 +236,14 @@ async function adminDashboardHtml(data) {
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">🏆 ランク設定 <span>▼</span></div>
           <div class="acc-content">
-            銀: <input type="number" id="th-silver" value="${th.silver}" style="width:60px"> 金: <input type="number" id="th-gold" value="${th.gold}" style="width:60px"><br><br>
-            白金: <input type="number" id="th-platinum" value="${th.platinum}" style="width:60px"> 黒: <input type="number" id="th-black" value="${th.black}" style="width:60px">
+            <div class="rank-setting-row">
+              <div class="rank-input-group">銀: <input type="number" id="th-silver" value="${th.silver}"></div>
+              <div class="rank-input-group">金: <input type="number" id="th-gold" value="${th.gold}"></div>
+            </div>
+            <div class="rank-setting-row">
+              <div class="rank-input-group">白金: <input type="number" id="th-platinum" value="${th.platinum}"></div>
+              <div class="rank-input-group">黒: <input type="number" id="th-black" value="${th.black}"></div>
+            </div>
           </div>
         </div>
 
@@ -225,15 +251,15 @@ async function adminDashboardHtml(data) {
     </div>
 
     <div class="card">
-      <h3>👤 リスナー管理 (多い順)</h3>
-      <input type="text" placeholder="名前検索..." oninput="filterAdmin(this.value)" style="margin-bottom:10px;">
+      <div class="card-label">👤 リスナー管理 (多い順)</div>
+      <input type="text" placeholder="名前検索..." oninput="filterAdmin(this.value)" style="margin-bottom:12px;">
       <div id="stamp-list">
         ${sortedStamps.map(s => `
           <div class="item-row admin-stamp-item">
             <button class="btn-red" onclick="this.parentElement.remove()">×</button>
             <input value="${s.name}" class="s-name" style="flex-grow:1;">
             <button class="btn-sm btn-outline" onclick="this.nextElementSibling.value--">－</button>
-            <input type="number" value="${s.count}" class="s-count" style="width:55px; text-align:center;">
+            <input type="number" value="${s.count}" class="s-count" style="width:50px; text-align:center; border:none; background:transparent;">
             <button class="btn-sm" style="background:var(--main);color:white" onclick="this.previousElementSibling.value++">＋</button>
           </div>`).join('')}
       </div>
@@ -248,6 +274,8 @@ async function adminDashboardHtml(data) {
     function toggleAcc(el){ 
       const c = el.nextElementSibling; 
       c.style.display = c.style.display==='block'?'none':'block'; 
+      const span = el.querySelector('span');
+      if(span) span.innerText = c.style.display==='block' ? '▲' : '▼';
       event.stopPropagation(); 
     }
     function setAlign(v, btn){ 
@@ -255,9 +283,9 @@ async function adminDashboardHtml(data) {
         btn.parentElement.querySelectorAll('button').forEach(b => b.classList.add('btn-outline'));
         btn.classList.remove('btn-outline');
     }
-    function filterAdmin(q){ document.querySelectorAll('.admin-stamp-item').forEach(e=>{ e.style.display=e.querySelector('.s-name').value.includes(q)?'flex':'none'; }); }
-    function addLink(){ const d=document.createElement('div'); d.className='item-row'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="l-label" placeholder="名"><input class="l-url" placeholder="URL">'; document.getElementById('link-list').appendChild(d); }
-    function addStamp(){ const d=document.createElement('div'); d.className='item-row admin-stamp-item'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="s-name" style="flex-grow:1"><button class="btn-sm btn-outline" onclick="this.nextElementSibling.value--">－</button><input type="number" value="0" class="s-count" style="width:55px; text-align:center;"><button class="btn-sm" style="background:var(--main);color:white" onclick="this.previousElementSibling.value++">＋</button>'; document.getElementById('stamp-list').prepend(d); }
+    function filterAdmin(q){ document.querySelectorAll('.admin-stamp-item').forEach(e=>{ e.style.display=e.querySelector('.s-name').value.toLowerCase().includes(q.toLowerCase())?'flex':'none'; }); }
+    function addLink(){ const d=document.createElement('div'); d.className='item-row'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="l-label" placeholder="名" style="width:30%"><input class="l-url" placeholder="URL" style="flex-grow:1">'; document.getElementById('link-list').appendChild(d); }
+    function addStamp(){ const d=document.createElement('div'); d.className='item-row admin-stamp-item'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="s-name" style="flex-grow:1"><button class="btn-sm btn-outline" onclick="this.nextElementSibling.value--">－</button><input type="number" value="0" class="s-count" style="width:50px; text-align:center; border:none; background:transparent;"><button class="btn-sm" style="background:var(--main);color:white" onclick="this.previousElementSibling.value++">＋</button>'; document.getElementById('stamp-list').prepend(d); }
     
     async function save(){
       const thresholds = {
