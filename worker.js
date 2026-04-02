@@ -52,6 +52,7 @@ const baseStyle = `
   body { background: #fdfdfd; color: var(--text); padding-bottom: 80px; }
   .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 15px; }
   
+  /* デジタル会員証 */
   .member-card { width: 100%; aspect-ratio: 1.6 / 1; border-radius: 20px; padding: 25px; position: relative; color: white; margin-bottom: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
   .card-bronze { background: linear-gradient(135deg, #804a00, #3d2300); }
   .card-silver { background: linear-gradient(135deg, #a0a0a0, #4a4a4a); }
@@ -73,7 +74,14 @@ const baseStyle = `
   .link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
   .link-btn { background: var(--main); color: white; text-decoration: none; padding: 10px 4px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; min-height: 44px; }
 
+  /* 管理画面用スタイル */
   .card { background: var(--white); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+  .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
+  .acc-header { background: #f8f9fa; padding: 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+  .acc-content { padding: 15px; display: none; }
+  .inner-acc { border: 1px solid #eee; margin-bottom: 5px; border-radius: 8px; }
+  .inner-header { padding: 10px 15px; background: #fff; cursor: pointer; font-size: 0.9rem; display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; }
+  
   .item-row { display: flex; align-items: center; gap: 8px; background: #fafafa; padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
   .btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; background: var(--main); color: white; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; }
   .btn-sm { min-height: 32px; padding: 0 10px; font-size: 0.8rem; width: auto; margin: 0; }
@@ -171,24 +179,48 @@ async function adminDashboardHtml(data) {
     <body><div class="container"><h1>Admin</h1>
     
     <div class="acc-item">
-      <div class="acc-header" onclick="toggleAcc(this)">⚙️ 各種設定 <span>▼</span></div>
+      <div class="acc-header" onclick="toggleAcc(this)" style="background:var(--sub); color:var(--main);">⚙️ 各種設定 <span>▼</span></div>
       <div class="acc-content">
-        <div class="acc-item"><div class="acc-header" onclick="toggleAcc(this)">🔐 パスワード</div><div class="acc-content"><input type="text" id="password" value="${data.password}"></div></div>
-        <div class="acc-item"><div class="acc-header" onclick="toggleAcc(this)">📢 メッセージ</div><div class="acc-content"><textarea id="message">${data.message}</textarea></div></div>
-        <div class="acc-item"><div class="acc-header" onclick="toggleAcc(this)">📅 イベント情報</div><div class="acc-content">
-          <textarea id="eventInfo" style="margin-bottom:10px;">${data.eventInfo}</textarea>
-          <div style="display:flex; gap:10px; align-items:center;">
-            配置：
-            <button class="btn-sm ${data.eventAlign==='left'?'':'btn-outline'}" onclick="setAlign('left',this)">左揃え</button>
-            <button class="btn-sm ${data.eventAlign==='center'?'':'btn-outline'}" onclick="setAlign('center',this)">中央揃え</button>
-            <input type="hidden" id="eventAlign" value="${data.eventAlign || 'center'}">
+        
+        <div class="inner-acc">
+          <div class="inner-header" onclick="toggleAcc(this)">🔐 パスワード <span>▼</span></div>
+          <div class="acc-content"><input type="text" id="password" value="${data.password}"></div>
+        </div>
+
+        <div class="inner-acc">
+          <div class="inner-header" onclick="toggleAcc(this)">📢 メッセージ <span>▼</span></div>
+          <div class="acc-content"><textarea id="message">${data.message}</textarea></div>
+        </div>
+
+        <div class="inner-acc">
+          <div class="inner-header" onclick="toggleAcc(this)">📅 イベント情報 <span>▼</span></div>
+          <div class="acc-content">
+            <textarea id="eventInfo" style="margin-bottom:10px;">${data.eventInfo}</textarea>
+            <div style="display:flex; gap:10px; align-items:center;">
+              配置：
+              <button class="btn-sm ${data.eventAlign==='left'?'':'btn-outline'}" onclick="setAlign('left',this)">左揃え</button>
+              <button class="btn-sm ${data.eventAlign==='center'?'':'btn-outline'}" onclick="setAlign('center',this)">中央揃え</button>
+              <input type="hidden" id="eventAlign" value="${data.eventAlign || 'center'}">
+            </div>
           </div>
-        </div></div>
-        <div class="acc-item"><div class="acc-header" onclick="toggleAcc(this)">🔗 リンク管理 (4列表示)</div><div class="acc-content"><div id="link-list">${data.links.map(l=>`<div class="item-row"><input value="${l.label}" class="l-label" placeholder="表示名"><input value="${l.url}" class="l-url" placeholder="URL"><button class="btn-red" onclick="this.parentElement.remove()">×</button></div>`).join('')}</div><button class="btn btn-sm btn-outline" onclick="addLink()">+ リンク追加</button></div></div>
-        <div class="acc-item"><div class="acc-header" onclick="toggleAcc(this)">🏆 ランクしきい値</div><div class="acc-content">
-          銀: <input type="number" id="th-silver" value="${th.silver}" style="width:60px"> 金: <input type="number" id="th-gold" value="${th.gold}" style="width:60px"><br><br>
-          白金: <input type="number" id="th-platinum" value="${th.platinum}" style="width:60px"> 黒: <input type="number" id="th-black" value="${th.black}" style="width:60px">
-        </div></div>
+        </div>
+
+        <div class="inner-acc">
+          <div class="inner-header" onclick="toggleAcc(this)">🔗 リンク管理 <span>▼</span></div>
+          <div class="acc-content">
+            <div id="link-list">${data.links.map(l=>`<div class="item-row"><input value="${l.label}" class="l-label" placeholder="名"><input value="${l.url}" class="l-url" placeholder="URL"><button class="btn-red" onclick="this.parentElement.remove()">×</button></div>`).join('')}</div>
+            <button class="btn btn-sm btn-outline" onclick="addLink()">+ リンク追加</button>
+          </div>
+        </div>
+
+        <div class="inner-acc">
+          <div class="inner-header" onclick="toggleAcc(this)">🏆 ランク設定 <span>▼</span></div>
+          <div class="acc-content">
+            銀: <input type="number" id="th-silver" value="${th.silver}" style="width:60px"> 金: <input type="number" id="th-gold" value="${th.gold}" style="width:60px"><br><br>
+            白金: <input type="number" id="th-platinum" value="${th.platinum}" style="width:60px"> 黒: <input type="number" id="th-black" value="${th.black}" style="width:60px">
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -213,14 +245,18 @@ async function adminDashboardHtml(data) {
 
   </div>
   <script>
-    function toggleAcc(el){ const c = el.nextElementSibling; c.style.display = c.style.display==='block'?'none':'block'; event.stopPropagation(); }
+    function toggleAcc(el){ 
+      const c = el.nextElementSibling; 
+      c.style.display = c.style.display==='block'?'none':'block'; 
+      event.stopPropagation(); 
+    }
     function setAlign(v, btn){ 
         document.getElementById('eventAlign').value = v; 
         btn.parentElement.querySelectorAll('button').forEach(b => b.classList.add('btn-outline'));
         btn.classList.remove('btn-outline');
     }
     function filterAdmin(q){ document.querySelectorAll('.admin-stamp-item').forEach(e=>{ e.style.display=e.querySelector('.s-name').value.includes(q)?'flex':'none'; }); }
-    function addLink(){ const d=document.createElement('div'); d.className='item-row'; d.innerHTML='<input class="l-label"><input class="l-url"><button class="btn-red" onclick="this.parentElement.remove()">×</button>'; document.getElementById('link-list').appendChild(d); }
+    function addLink(){ const d=document.createElement('div'); d.className='item-row'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="l-label" placeholder="名"><input class="l-url" placeholder="URL">'; document.getElementById('link-list').appendChild(d); }
     function addStamp(){ const d=document.createElement('div'); d.className='item-row admin-stamp-item'; d.innerHTML='<button class="btn-red" onclick="this.parentElement.remove()">×</button><input class="s-name" style="flex-grow:1"><button class="btn-sm btn-outline" onclick="this.nextElementSibling.value--">－</button><input type="number" value="0" class="s-count" style="width:55px; text-align:center;"><button class="btn-sm" style="background:var(--main);color:white" onclick="this.previousElementSibling.value++">＋</button>'; document.getElementById('stamp-list').prepend(d); }
     
     async function save(){
