@@ -52,7 +52,6 @@ const baseStyle = `
   body { background: #fdfdfd; color: var(--text); padding-bottom: 80px; }
   .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 15px; }
   
-  /* カード基本 */
   .card { background: var(--white); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
   .card-label { font-size: 0.9rem; color: var(--main); margin-bottom: 8px; font-weight: bold; }
 
@@ -72,26 +71,25 @@ const baseStyle = `
   .card-rank { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; display: inline-block; margin-bottom: 5px; }
   .card-count { font-size: 0.9rem; font-weight: bold; }
 
-  /* メッセージ */
   .marquee-container { background: var(--sub); color: var(--main); padding: 12px 0; overflow: hidden; white-space: nowrap; margin-bottom: 15px; border-radius: 12px; font-weight: bold; }
   .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; }
   @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-  /* リンクボタン */
-  .link-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; justify-items: center; width: 100%; }
-  .link-btn { background: var(--main); color: white; text-decoration: none; padding: 12px 10px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 0.85rem; width: 100%; max-width: 180px; display: flex; align-items: center; justify-content: center; }
+  /* リンクボタン (最大4つ並列・中央揃え) */
+  .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; justify-content: center; width: 100%; max-width: 440px; margin: 0 auto; }
+  .link-btn { background: var(--main); color: white; text-decoration: none; padding: 10px 5px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; min-height: 44px; }
 
-  /* 管理画面用 */
+  /* 管理画面 */
   .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
   .acc-header { background: #f8f9fa; padding: 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
   .acc-content { padding: 15px; display: none; }
   .inner-acc { border: 1px solid #eee; margin-bottom: 8px; border-radius: 10px; }
   .inner-header { padding: 12px 15px; background: #fff; cursor: pointer; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
   
-  /* ランク設定の崩れ修正 */
-  .rank-setting-row { display: flex; gap: 15px; margin-bottom: 12px; align-items: center; }
-  .rank-input-group { display: flex; align-items: center; gap: 8px; flex: 1; }
-  .rank-input-group input { width: 100%; }
+  /* ランク設定修正 */
+  .rank-flex-container { display: flex; flex-wrap: wrap; gap: 10px; }
+  .rank-box { flex: 1 1 calc(50% - 10px); display: flex; align-items: center; gap: 8px; background: #fdfdfd; padding: 5px 0; }
+  .rank-box span { font-size: 0.9rem; min-width: 35px; color: var(--text); }
 
   .item-row { display: flex; align-items: center; gap: 8px; background: #fafafa; padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
   .btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; background: var(--main); color: white; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; }
@@ -118,7 +116,7 @@ async function mainPortalHtml(data) {
 
     ${data.displaySettings.links ? `<div class="card" style="text-align:center;">
       <div class="card-label">LINKS</div>
-      <div class="link-grid" style="margin: 0 auto;">
+      <div class="link-grid">
         ${data.links.map(l => `<a href="${l.url}" target="_blank" class="link-btn">${l.label}</a>`).join('')}
       </div>
     </div>` : ''}
@@ -236,13 +234,11 @@ async function adminDashboardHtml(data) {
         <div class="inner-acc">
           <div class="inner-header" onclick="toggleAcc(this)">🏆 ランク設定 <span>▼</span></div>
           <div class="acc-content">
-            <div class="rank-setting-row">
-              <div class="rank-input-group">銀: <input type="number" id="th-silver" value="${th.silver}"></div>
-              <div class="rank-input-group">金: <input type="number" id="th-gold" value="${th.gold}"></div>
-            </div>
-            <div class="rank-setting-row">
-              <div class="rank-input-group">白金: <input type="number" id="th-platinum" value="${th.platinum}"></div>
-              <div class="rank-input-group">黒: <input type="number" id="th-black" value="${th.black}"></div>
+            <div class="rank-flex-container">
+              <div class="rank-box"><span>銀:</span><input type="number" id="th-silver" value="${th.silver}"></div>
+              <div class="rank-box"><span>金:</span><input type="number" id="th-gold" value="${th.gold}"></div>
+              <div class="rank-box"><span>白金:</span><input type="number" id="th-platinum" value="${th.platinum}"></div>
+              <div class="rank-box"><span>黒:</span><input type="number" id="th-black" value="${th.black}"></div>
             </div>
           </div>
         </div>
