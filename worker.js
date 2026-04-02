@@ -150,3 +150,4 @@ async function adminDashboardHtml(data) {
       }
     </script></body></html>`;
 }
+
